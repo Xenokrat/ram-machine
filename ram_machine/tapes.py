@@ -1,16 +1,13 @@
-numeric = int | float
-
-
-def validate_numeric_data(value: numeric) -> numeric:
-    if not isinstance(value, (int, float)):
-        raise TypeError(f"value should be numeric, got {type(value).__name__}")
+def validate_int_data(value: int) -> int:
+    if not isinstance(value, int):
+        raise TypeError(f"value should be int, got {type(value).__name__}")
     return value
 
 
 class InputTape:
-    def __init__(self, data: list[numeric]) -> None:
+    def __init__(self, data: list[int]) -> None:
         for val in data:
-            validate_numeric_data(val)
+            validate_int_data(val)
         self.__data = data
         self.current_cell = 0
 
@@ -19,16 +16,16 @@ class InputTape:
         return self.__data
 
     @data.setter
-    def data(self, data: list[numeric]):
+    def data(self, data: list[int]):
         for val in data:
-            validate_numeric_data(val)
+            validate_int_data(val)
         self.__data = data
 
     @data.getter
     def data(self):
         return self.__data
 
-    def read(self) -> numeric | None:
+    def read(self) -> int | None:
         try:
             res = self.__data[self.current_cell]
             self.current_cell += 1
@@ -39,7 +36,7 @@ class InputTape:
 
 class OutputTape:
     def __init__(self) -> None:
-        self.__data: list[numeric] = []
+        self.__data: list[int] = []
 
     @property
     def data(self):
@@ -49,6 +46,6 @@ class OutputTape:
     def data(self):
         return self.__data
 
-    def write(self, value: numeric) -> None:
-        validate_numeric_data(value)
+    def write(self, value: int) -> None:
+        validate_int_data(value)
         self.__data.append(value)

@@ -41,7 +41,7 @@ class Commands:
         reg[address2] = reg[address1]
 
     @staticmethod
-    def jnz(prog: Program, value: numeric, mark: int) -> None:
+    def jnz(prog: Program, value: numeric, mark: str) -> None:
         if value > 0:
             prog.current_command = prog.command_str_list.index(mark)
 

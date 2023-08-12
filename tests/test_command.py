@@ -7,16 +7,16 @@ from ram_machine.tapes import InputTape, OutputTape
 
 class TestCommands:
     def test_read(self):
-        itape = InputTape([1, 2.2, -5.53])
+        itape = InputTape([1, 2, -5])
         reg = Register({})
         Commands.read(itape, reg)
         assert reg.summator == 1
         Commands.read(itape, reg)
-        assert reg.summator == 2.2
+        assert reg.summator == 2
         Commands.read(itape, reg)
-        assert reg.summator == -5.53
+        assert reg.summator == -5
         Commands.read(itape, reg)
-        assert reg.summator == -5.53
+        assert reg.summator == -5
 
     def test_write(self):
         otape = OutputTape()
@@ -24,9 +24,9 @@ class TestCommands:
         Commands.write(otape, reg)
         reg.summator = 1
         Commands.write(otape, reg)
-        reg.summator = 2.2
+        reg.summator = 2
         Commands.write(otape, reg)
-        assert otape.data == [1, 2.2]
+        assert otape.data == [1, 2]
 
     def test_load(self):
         reg = Register({})
@@ -36,9 +36,9 @@ class TestCommands:
     def test_add(self):
         reg = Register({})
         val1 = 2
-        val2 = -3.22
+        val2 = -3
         Commands.add(reg, val1, val2, 1)
-        assert reg[1] == -1.22
+        assert reg[1] == -1
 
     def test_sub(self):
         reg = Register({})

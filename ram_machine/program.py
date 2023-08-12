@@ -18,6 +18,7 @@ allowed_commands_no_args = {
     "HALT",
 }
 
+
 class NonValidCommand(Exception):
     pass
 
@@ -77,6 +78,9 @@ class Program:
         self.current_command += 1
 
     def do_read(self) -> None:
+        if self.input_tape.current_cell >= len(self.input_tape.data):
+            self.do_halt()
+            return
         self.command_cls.read(self.input_tape, self.reg)
 
     def do_write(self) -> None:
@@ -163,7 +167,10 @@ class Program:
         raise NonValidCommand(f"\"{arg}\" is invalid argument")
 
     def exec_one_step(self) -> None:
-        pass
+        self.running = True
+        self.parse_command()
 
     def exec_many_steps(self) -> None:
-        pass
+        self.running = True
+        while self.running:
+            self.parse_command()
