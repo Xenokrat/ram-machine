@@ -1,3 +1,7 @@
+class InputTapeError(Exception):
+    pass
+
+
 def validate_int_data(value: int) -> int:
     if not isinstance(value, int):
         raise TypeError(f"value should be int, got {type(value).__name__}")
@@ -25,12 +29,12 @@ class InputTape:
     def data(self):
         return self.__data
 
-    def read(self) -> int | None:
+    def read(self) -> int:
         try:
             res = self.__data[self.current_cell]
-            self.current_cell += 1
         except IndexError:
-            res = None
+            raise InputTapeError("READ non-existing value")
+        self.current_cell += 1
         return res
 
 

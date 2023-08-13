@@ -1,4 +1,5 @@
-numeric = int | float
+class RegisterError(Exception):
+    pass
 
 
 class Register:
@@ -8,7 +9,7 @@ class Register:
         self.__data = dict_
 
     @property
-    def summator(self) -> numeric | None:
+    def summator(self) -> int:
         return self[0]
 
     @summator.setter
@@ -17,32 +18,32 @@ class Register:
         self[0] = value
 
     @summator.getter
-    def summator(self) -> numeric | None:
-        try:
-            return self[0]
-        except KeyError:
-            return None
+    def summator(self) -> int:
+        return self[0]
 
-    def __setitem__(self, key: int, value: numeric) -> None:
+    def __setitem__(self, key: int, value: int) -> None:
         self._validate_key_value(key, value)
         self.__data[key] = value
 
-    def __getitem__(self, key: int) -> numeric | None:
+    def __getitem__(self, key: int) -> int:
         self._validate_key_value(key, 0)
         try:
             return self.__data[key]
         except KeyError:
-            return None
+            raise RegisterError("Trying to get non-existing value from register")
 
     def __delitem__(self, key: int):
         self._validate_key_value(key, 0)
-        del self.__data[key]
+        try:
+            del self.__data[key]
+        except RegisterError:
+            raise RegisterError("Trying to delete non-existing value from register")
 
-    def _validate_key_value(self, key: int, value: int | float) -> None:
+    def _validate_key_value(self, key: int, value: int) -> None:
         if not isinstance(key, int):
             raise TypeError(f"key should be int, got {type(key).__name__}")
 
-        if not isinstance(value, (int, float)):
+        if not isinstance(value, int):
             raise TypeError(
-                f"value should be numeric, got {type(value).__name__}"
+                f"value should be int, got {type(value).__name__}"
             )

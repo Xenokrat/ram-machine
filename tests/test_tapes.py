@@ -1,6 +1,6 @@
 import pytest
 
-from ram_machine.tapes import InputTape, OutputTape, validate_int_data
+from ram_machine.tapes import InputTape, InputTapeError, OutputTape, validate_int_data
 
 
 class TestValidate:
@@ -44,8 +44,8 @@ class TestInputTape:
         assert itape.current_cell == 2
         assert itape.read() == -5
         assert itape.current_cell == 3
-        assert itape.read() is None
-        assert itape.current_cell == 3
+        with pytest.raises(InputTapeError):
+            itape.read()
 
 
 class TestOutputTape:

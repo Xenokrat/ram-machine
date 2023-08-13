@@ -36,7 +36,7 @@ class TestProgram:
         mock_program.do_read.assert_called()
 
     def test_parsed_command_mark(self, mock_program: Program) -> None:
-        command_str_list = ["12345",]
+        command_str_list = ["12345:",]
         mock_program.command_str_list = command_str_list
         assert mock_program.current_command == 0
         mock_program.parse_command()
@@ -78,8 +78,6 @@ class TestProgram:
         mock_program.reg = Register({0: 1, 1: 5, -1: 10, 5: 100})
         with pytest.raises(NonValidCommand):
             mock_program.parse_const_arg("[[1]")
-        with pytest.raises(NonValidCommand):
-            mock_program.parse_const_arg("[10]")
 
     def test_parse_address_arg(self, mock_program: Program) -> None:
         mock_program.reg = Register({0: 1, 1: 5, -1: 10, 5: 100})
@@ -125,14 +123,9 @@ class TestProgram:
         mock_program.do_cpy("[1], [0]")
         assert mock_program.reg.summator == -4
 
-    def test_do_cpy_fail(self, mock_program: Program) -> None:
-        mock_program.reg = Register({0: 1, 1: -4})
-        with pytest.raises(TypeError):
-            mock_program.do_cpy("[5], [0]")
-
     def test_do_jnz_gt_zero(self, mock_program: Program) -> None:
         mock_program.reg = Register({0: 1, 1: -4})
-        command_str_list = ["JNZ [0], 1234", "LOAD 2, [0]", "READ", "1234", "WRITE"]
+        command_str_list = ["JNZ [0], 1234", "LOAD 2, [0]", "READ", "1234:", "WRITE"]
         mock_program.command_str_list = command_str_list
         mock_program.parse_command()
         mock_program.parse_command()

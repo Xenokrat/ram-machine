@@ -4,7 +4,6 @@ from ram_machine.command import Commands
 from ram_machine.register import Register
 from ram_machine.tapes import InputTape, OutputTape
 
-numeric = int | float
 allowed_commands_with_args = {
     "LOAD",
     "ADD",
@@ -45,9 +44,8 @@ class Program:
     def parse_command(self) -> None:
         command_str = self.command_str_list[self.current_command]
         parsed = command_str.split(" ", 1)
-        if len(parsed) == 1 and parsed[0].isdigit():
+        if len(parsed) == 1 and parsed[0][-1] == ":":
             pass
-        # Case of mark
         elif len(parsed) == 1 and parsed[0] in allowed_commands_no_args:
             match parsed[0]:
                 case "READ":
@@ -130,39 +128,28 @@ class Program:
     def do_jnz(self, args: str) -> None:
         try:
             str_value, str_mark = args.split(",")
-            mark = str_mark.strip()
+            mark = str_mark.strip() + ":"
         except ValueError:
-            raise NonValidCommand(f"\"{args}\" are invalid arguments for SUB")
+            raise NonValidCommand(f"\"{args}\" are invalid arguments for JNZ")
         value = self.parse_const_arg(str_value)
         self.command_cls.jnz(self, value, mark)
 
-    def parse_const_arg(self, arg: str) -> numeric:
+    def parse_const_arg(self, arg: str) -> int:
         arg = arg.strip()
         if arg.isdigit():
             return int(arg)
         if match := re.match(r"\[(-?\d+)\]", arg):
-            res = self.reg[int(match.group(1))]
-            if res is None:
-                raise NonValidCommand(f"\"{arg}\" is invalid address")
-            return res
+            return self.reg[int(match.group(1))]
         if match := re.match(r"\[\[(-?\d+)\]\]", arg):
             address = self.reg[int(match.group(1))]
-            if address is None:
-                raise NonValidCommand(f"\"{arg}\" is invalid address")
-            res = self.reg[address]
-            if res is None:
-                raise NonValidCommand(f"\"{arg}\" is invalid address")
-            return res
+            return self.reg[address]
         raise NonValidCommand(f"\"{arg}\" is invalid argument")
 
-    def parse_address_arg(self, arg: str) -> numeric:
+    def parse_address_arg(self, arg: str) -> int:
         arg = arg.strip()
         if match := re.match(r"\[(-?\d+)\]", arg):
             return int(match.group(1))
         if match := re.match(r"\[\[(-?\d+)\]\]", arg):
-            address = self.reg[int(match.group(1))]
-            if address is None:
-                raise NonValidCommand(f"\"{arg}\" is invalid address")
             return self.reg[int(match.group(1))]
         raise NonValidCommand(f"\"{arg}\" is invalid argument")
 

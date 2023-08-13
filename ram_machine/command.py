@@ -7,8 +7,6 @@ if TYPE_CHECKING:
     from ram_machine.register import Register
     from ram_machine.tapes import InputTape, OutputTape
 
-numeric = int | float
-
 
 class Commands:
 
@@ -25,15 +23,15 @@ class Commands:
             otape.write(val)
 
     @staticmethod
-    def load(reg: Register, value: numeric, address: int) -> None:
+    def load(reg: Register, value: int, address: int) -> None:
         reg[address] = value
 
     @staticmethod
-    def add(reg: Register, value1: numeric, value2: numeric, address: int) -> None:
+    def add(reg: Register, value1: int, value2: int, address: int) -> None:
         reg[address] = round(value1 + value2, 2)
 
     @staticmethod
-    def sub(reg: Register, value1: numeric, value2: numeric, address: int) -> None:
+    def sub(reg: Register, value1: int, value2: int, address: int) -> None:
         reg[address] = round(value1 - value2, 2)
 
     @staticmethod
@@ -41,7 +39,7 @@ class Commands:
         reg[address2] = reg[address1]
 
     @staticmethod
-    def jnz(prog: Program, value: numeric, mark: str) -> None:
+    def jnz(prog: Program, value: int, mark: str) -> None:
         if value > 0:
             prog.current_command = prog.command_str_list.index(mark)
 

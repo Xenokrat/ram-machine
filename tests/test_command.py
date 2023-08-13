@@ -1,8 +1,10 @@
 from unittest.mock import MagicMock
 
+import pytest
+
 from ram_machine.command import Commands
 from ram_machine.register import Register
-from ram_machine.tapes import InputTape, OutputTape
+from ram_machine.tapes import InputTape, InputTapeError, OutputTape
 
 
 class TestCommands:
@@ -15,13 +17,12 @@ class TestCommands:
         assert reg.summator == 2
         Commands.read(itape, reg)
         assert reg.summator == -5
-        Commands.read(itape, reg)
-        assert reg.summator == -5
+        with pytest.raises(InputTapeError):
+            Commands.read(itape, reg)
 
     def test_write(self):
         otape = OutputTape()
         reg = Register({})
-        Commands.write(otape, reg)
         reg.summator = 1
         Commands.write(otape, reg)
         reg.summator = 2

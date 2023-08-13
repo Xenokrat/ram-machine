@@ -1,6 +1,6 @@
 import pytest
 
-from ram_machine.register import Register
+from ram_machine.register import Register, RegisterError
 
 
 class TestRegister:
@@ -14,8 +14,8 @@ class TestRegister:
             reg._validate_key_value(4.23, "word")
 
     def test_create_reg(self) -> None:
-        reg = Register({1: 1, 2: 2.4, -3: -51})
-        assert reg._Register__data == {1: 1, 2: 2.4, -3: -51}
+        reg = Register({1: 1, 2: 2, -3: -51})
+        assert reg._Register__data == {1: 1, 2: 2, -3: -51}
 
     def test_not_create_reg(self) -> None:
         with pytest.raises(TypeError):
@@ -52,9 +52,11 @@ class TestRegister:
         reg = Register({0: 0})
         assert reg[0] == 0
         del reg[0]
-        assert reg[0] is None
+        with pytest.raises(RegisterError):
+            reg[0]
 
     def test_getitem(self) -> None:
         reg = Register({0: 0})
         assert reg[0] == 0
-        assert reg[1] is None
+        with pytest.raises(RegisterError):
+            reg[1]
