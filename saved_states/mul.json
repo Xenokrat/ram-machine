@@ -1,0 +1,4 @@
+{
+  "commands": ["LOAD 0, [4]", "READ", "CPY [0], [1]", "READ", "CPY [0], [2]", "JNZ [1], first_positive", "first_zero_or_negative:", "SUB 0, [1], [1]", "SUB 0, [2], [2]", "first_positive:", "CPY [1], [3]", "loop:", "ADD [2], [4], [4]", "SUB [3], 1, [3]", "JNZ [3], loop", "CPY [4], [0]", "WRITE", "HALT"], 
+  "input": [6, -5]
+}

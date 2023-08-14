@@ -70,7 +70,7 @@ class TestFullProgram:
         program.exec_many_steps()
         assert program.output_tape.data[0] == 8
 
-    def test_mul(self, program: Program) -> None:
+    def test_non_neg_mul(self, program: Program) -> None:
         program.input_tape = InputTape([28, 11])
         program.command_str_list = [
             "READ",
@@ -90,3 +90,43 @@ class TestFullProgram:
         ]
         program.exec_many_steps()
         assert program.output_tape.data[0] == 308
+
+    def test_imul(self, program: Program) -> None:
+        program.command_str_list = [
+            "LOAD 0, [4]",
+            "READ",
+            "CPY [0], [1]",
+            "READ",
+            "CPY [0], [2]",
+            "JNZ [1], first_positive",
+            "first_zero_or_negative:",
+            "SUB 0, [1], [1]",
+            "SUB 0, [2], [2]",
+            "first_positive:",
+            "CPY [1], [3]",
+            "loop:",
+            "ADD [2], [4], [4]",
+            "SUB [3], 1, [3]",
+            "JNZ [3], loop",
+            "CPY [4], [0]",
+            "WRITE",
+            "HALT",
+        ]
+        program.input_tape = InputTape([6, 5])
+        program.exec_many_steps()
+        assert program.output_tape.data[0] == 30
+
+        program.output_tape.clear()
+        program.input_tape = InputTape([6, -5])
+        program.exec_many_steps()
+        assert program.output_tape.data[0] == -30
+
+        program.output_tape.clear()
+        program.input_tape = InputTape([-6, 5])
+        program.exec_many_steps()
+        assert program.output_tape.data[0] == -30
+
+        program.output_tape.clear()
+        program.input_tape = InputTape([-6, -5])
+        program.exec_many_steps()
+        assert program.output_tape.data[0] == 30

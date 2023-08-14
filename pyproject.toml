@@ -8,6 +8,7 @@ packages = [{include = "ram_machine"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
+pyqt6-tools = "^6.4.2.3.3"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -27,3 +28,6 @@ profile = "black"
 
 [tool.mypy]
 exclude = ["tests/"]
+
+[tool.pytest]
+log-cli = true

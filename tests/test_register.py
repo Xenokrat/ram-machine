@@ -60,3 +60,8 @@ class TestRegister:
         assert reg[0] == 0
         with pytest.raises(RegisterError):
             reg[1]
+
+    def test_clear(self) -> None:
+        reg = Register({0: 0})
+        reg.clear()
+        assert len(reg) == 0

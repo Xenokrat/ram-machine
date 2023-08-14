@@ -59,3 +59,10 @@ class TestOutputTape:
         otape = OutputTape()
         with pytest.raises(TypeError):
             otape.write('1')
+
+    def test_clear(self) -> None:
+        otape = OutputTape()
+        otape.write(1)
+        otape.write(2)
+        otape.clear()
+        assert otape.data == []

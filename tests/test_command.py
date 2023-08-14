@@ -56,5 +56,10 @@ class TestCommands:
     def test_halt(self):
         program = MagicMock()
         program.running = True
+        program.reg = {0: 0}
+        program.current_cell = 1
         Commands.halt(program)
         assert program.running is False
+        assert program.reg == {}
+        # TODO: fix later
+        assert program.current_command == -1

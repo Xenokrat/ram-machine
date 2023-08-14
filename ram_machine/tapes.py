@@ -53,3 +53,6 @@ class OutputTape:
     def write(self, value: int) -> None:
         validate_int_data(value)
         self.__data.append(value)
+
+    def clear(self) -> None:
+        self.__data.clear()

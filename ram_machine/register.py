@@ -39,6 +39,15 @@ class Register:
         except RegisterError:
             raise RegisterError("Trying to delete non-existing value from register")
 
+    def __len__(self) -> int:
+        return len(self.__data)
+
+    def __repr__(self) -> str:
+        return str(self.__data)
+
+    def clear(self) -> None:
+        self.__data.clear()
+
     def _validate_key_value(self, key: int, value: int) -> None:
         if not isinstance(key, int):
             raise TypeError(f"key should be int, got {type(key).__name__}")

@@ -45,4 +45,7 @@ class Commands:
 
     @staticmethod
     def halt(prog: Program) -> None:
+        prog.reg.clear()
+        prog.current_command = -1
+        prog.input_tape.current_cell = 0
         prog.running = False
