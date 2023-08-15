@@ -17,6 +17,7 @@ from ram_machine.register import Register
 from ram_machine.tapes import InputTape, OutputTape
 from ram_machine.ui import Ui_Form
 
+
 class RamMachine(QWidget):
     def __init__(self) -> None:
         super().__init__()
@@ -177,12 +178,8 @@ class RamMachine(QWidget):
         return values
 
     def step(self) -> None:
-        print(f"Register {self.program.reg}")
-        print(f"InputTape {self.program.input_tape.data}\n"
-              f"IT pointer {self.program.input_tape.current_cell}")
-        print(f"OutputTape {self.program.output_tape.data}\n")
         try:
-            self.program.parse_command()
+            self.program.exec_command()
         except Exception as e:
             self.program.running = False
             QMessageBox.critical(self, type(e).__name__, str(e))

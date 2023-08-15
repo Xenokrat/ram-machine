@@ -31,3 +31,6 @@ exclude = ["tests/"]
 
 [tool.pytest]
 log-cli = true
+
+[tool.ruff]
+exclude = ["ui.py"]
