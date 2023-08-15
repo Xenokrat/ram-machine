@@ -40,7 +40,6 @@ class Commands:
             raise NonValidCommand(f"\"{args}\" are invalid arguments for LOAD")
         const = program.parse_const_arg(str_const)
         address = program.parse_address_arg(str_address)
-        print(f"Const {const}, address {address}")
         program.reg[address] = const
         program.current_command += 1
 
