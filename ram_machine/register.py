@@ -21,6 +21,9 @@ class Register:
     def summator(self) -> int:
         return self[0]
 
+    def copy(self) -> dict:
+        return self.__data.copy()
+
     def __setitem__(self, key: int, value: int) -> None:
         self._validate_key_value(key, value)
         self.__data[key] = value
@@ -38,6 +41,9 @@ class Register:
             del self.__data[key]
         except RegisterError:
             raise RegisterError("Trying to delete non-existing value from register")
+
+    def __eq__(self, other) -> bool:
+        return self.__data == other
 
     def __len__(self) -> int:
         return len(self.__data)

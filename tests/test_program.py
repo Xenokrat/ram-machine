@@ -9,6 +9,7 @@ from ram_machine.program import (
     OutputTape,
     Program,
     Register,
+    DeadlockError,
 )
 
 
@@ -70,14 +71,14 @@ class TestProgram:
 
     def test_parse_const_arg(self, mock_program: Program) -> None:
         mock_program.reg = Register({0: 1, 1: 5, -1: 10, 5: 100})
-        assert mock_program.parse_const_arg("5") == 5
-        assert mock_program.parse_const_arg("[-1] ") == 10
-        assert mock_program.parse_const_arg("[[1]]") == 100
+        assert mock_program.parse_const_or_address_arg("5") == 5
+        assert mock_program.parse_const_or_address_arg("[-1] ") == 10
+        assert mock_program.parse_const_or_address_arg("[[1]]") == 100
 
     def test_parse_const_arg_fail(self, mock_program: Program) -> None:
         mock_program.reg = Register({0: 1, 1: 5, -1: 10, 5: 100})
         with pytest.raises(NonValidCommand):
-            mock_program.parse_const_arg("[[1]")
+            mock_program.parse_const_or_address_arg("[[1]")
 
     def test_parse_address_arg(self, mock_program: Program) -> None:
         mock_program.reg = Register({0: 1, 1: 5, -1: 10, 5: 100})
@@ -87,7 +88,7 @@ class TestProgram:
     def test_parse_address_arg_fail(self, mock_program: Program) -> None:
         mock_program.reg = Register({0: 1, 1: 5, -1: 10, 5: 100})
         with pytest.raises(NonValidCommand):
-            mock_program.parse_const_arg("[[1]")
+            mock_program.parse_const_or_address_arg("[[1]")
         with pytest.raises(NonValidCommand):
             mock_program.parse_address_arg("5")
 
@@ -139,3 +140,14 @@ class TestProgram:
         mock_program.parse_command()
         mock_program.parse_command()
         assert mock_program.reg.summator == 2
+
+    def test_deadlock(self, mock_program: Program) -> None:
+        mock_program.command_str_list = [
+            "deadlock:",
+            "LOAD 2, [0]",
+            "JNZ [0], deadlock",
+            "WRITE",
+            "HALT"
+        ]
+        with pytest.raises(DeadlockError):
+            mock_program.exec_many_steps()

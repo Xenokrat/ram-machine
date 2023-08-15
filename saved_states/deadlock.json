@@ -1,0 +1,4 @@
+{
+  "commands": ["deadlock:", "LOAD 2, [0]", "JNZ [0], deadlock", "WRITE", "HALT"], 
+  "input": []
+}

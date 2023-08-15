@@ -1,5 +1,4 @@
 import json
-import logging
 import sys
 from time import sleep
 
@@ -17,9 +16,6 @@ from ram_machine.program import Program
 from ram_machine.register import Register
 from ram_machine.tapes import InputTape, OutputTape
 from ram_machine.ui import Ui_Form
-
-log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
 
 class RamMachine(QWidget):
     def __init__(self) -> None:
@@ -47,6 +43,8 @@ class RamMachine(QWidget):
         self.ui.col_commands.itemEntered.connect(self.set_or_update_program)
         self.ui.col_commands.itemEntered.connect(self.update_ui)
         self.ui.btn_del_command.clicked.connect(self.delete_command)
+        self.ui.btn_del_command.clicked.connect(self.set_or_update_program)
+        self.ui.btn_del_command.clicked.connect(self.update_ui)
 
         # Input Values
         self.ui.line_edit_value.returnPressed.connect(self.add_or_edit_value)
@@ -54,6 +52,8 @@ class RamMachine(QWidget):
         self.ui.col_itape.itemChanged.connect(self.set_or_update_program)
         self.ui.col_itape.itemEntered.connect(self.set_or_update_program)
         self.ui.btn_del_input.clicked.connect(self.delete_input)
+        self.ui.btn_del_input.clicked.connect(self.set_or_update_program)
+        self.ui.btn_del_input.clicked.connect(self.update_ui)
 
         # New
         self.ui.btn_new.clicked.connect(self.new)
@@ -78,11 +78,13 @@ class RamMachine(QWidget):
         self.ui.col_otape.addItems(items)
 
     def new(self) -> None:
+        self.ui.col_commands.clear()
+        self.ui.col_itape.clear()
         self.program.current_command = 0
         self.program.input_tape.current_cell = 0
+        self.set_or_update_program()
         self.program.output_tape.clear()
         self.update_ui()
-        self.ui.col_otape.clear()
 
     def save(self) -> None:
         commands = self.get_commands()

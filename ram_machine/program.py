@@ -1,4 +1,5 @@
 import re
+from copy import copy
 
 from ram_machine.command import Commands
 from ram_machine.register import Register
@@ -21,6 +22,9 @@ allowed_commands_no_args = {
 class NonValidCommand(Exception):
     pass
 
+class DeadlockError(Exception):
+    pass
+
 
 class Program:
 
@@ -40,6 +44,7 @@ class Program:
         self.command_str_list = command_str_list
         self.current_command = current_command
         self.running: bool = False
+        self.deadlock_checker = dict()
 
     def parse_command(self) -> None:
         command_str = self.command_str_list[self.current_command]
@@ -92,7 +97,7 @@ class Program:
             str_value, str_address = args.split(",")
         except ValueError:
             raise NonValidCommand(f"\"{args}\" are invalid arguments for LOAD")
-        value = self.parse_const_arg(str_value)
+        value = self.parse_const_or_address_arg(str_value)
         address = self.parse_address_arg(str_address)
         self.command_cls.load(self.reg, value, address)
 
@@ -101,8 +106,8 @@ class Program:
             str_value1, str_value2, str_address = args.split(",")
         except ValueError:
             raise NonValidCommand(f"\"{args}\" are invalid arguments for ADD")
-        value1 = self.parse_const_arg(str_value1)
-        value2 = self.parse_const_arg(str_value2)
+        value1 = self.parse_const_or_address_arg(str_value1)
+        value2 = self.parse_const_or_address_arg(str_value2)
         address = self.parse_address_arg(str_address)
         self.command_cls.add(self.reg, value1, value2, address)
 
@@ -111,8 +116,8 @@ class Program:
             str_value1, str_value2, str_address = args.split(",")
         except ValueError:
             raise NonValidCommand(f"\"{args}\" are invalid arguments for SUB")
-        value1 = self.parse_const_arg(str_value1)
-        value2 = self.parse_const_arg(str_value2)
+        value1 = self.parse_const_or_address_arg(str_value1)
+        value2 = self.parse_const_or_address_arg(str_value2)
         address = self.parse_address_arg(str_address)
         self.command_cls.sub(self.reg, value1, value2, address)
 
@@ -131,10 +136,11 @@ class Program:
             mark = str_mark.strip() + ":"
         except ValueError:
             raise NonValidCommand(f"\"{args}\" are invalid arguments for JNZ")
-        value = self.parse_const_arg(str_value)
+        value = self.parse_const_or_address_arg(str_value)
+        self.check_deadlock(mark)
         self.command_cls.jnz(self, value, mark)
 
-    def parse_const_arg(self, arg: str) -> int:
+    def parse_const_or_address_arg(self, arg: str) -> int:
         arg = arg.strip()
         if arg.isdigit():
             return int(arg)
@@ -161,3 +167,9 @@ class Program:
         self.running = True
         while self.running:
             self.parse_command()
+
+    def check_deadlock(self, mark: str) -> None:
+        if mark in self.deadlock_checker:
+            if self.deadlock_checker[mark] == self.reg:
+                raise DeadlockError("Program faced a deadlock!")
+        self.deadlock_checker[mark] = self.reg.copy()
